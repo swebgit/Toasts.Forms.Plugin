@@ -57,7 +57,7 @@ namespace Plugin.Toasts
 			}
 
 			// Only way I could think of doing it without adding a XF reference, but I now have a magic string.
-			var isAppCompat = activity.GetType().BaseType.ToString() != "Xamarin.Forms.Platform.Android.FormsApplicationActivity";
+		    var isAppCompat = this.IsSubClassOfType(activity.GetType(), "Xamarin.Forms.Platform.Android.FormsAppCompatActivity");
 
 			if (isAppCompat)
 				// and least we set the Y of the view to be just under the statusbar
@@ -65,6 +65,16 @@ namespace Plugin.Toasts
 
 			return view;
 		}
+
+	    private bool IsSubClassOfType(Type type, string fullTypeName)
+	    {
+	        if (type.ToString().Equals(fullTypeName, StringComparison.OrdinalIgnoreCase))
+	        {
+	            return true;
+	        }
+	        return type.BaseType != null && this.IsSubClassOfType(type.BaseType, fullTypeName);
+	    }
+
 		private int _statusBarHeight = -1;
 		internal int GetStatusBarHeight()
 		{
